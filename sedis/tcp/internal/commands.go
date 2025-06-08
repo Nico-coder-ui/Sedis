@@ -2,6 +2,7 @@ package internal
 
 import (
 	"net"
+	"sedis/stokage"
 	"strconv"
 	"strings"
 	"time"
@@ -22,7 +23,7 @@ func HelpHandle(conn net.Conn) {
 	conn.Write([]byte(help))
 }
 
-func TtlHandle(tokens []string, conn net.Conn, s *Store) {
+func TtlHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 	if len(tokens) < 2 {
 		conn.Write([]byte("Usage: TTL key\n"))
 		return
@@ -35,7 +36,7 @@ func TtlHandle(tokens []string, conn net.Conn, s *Store) {
 	conn.Write([]byte(value + "\n"))
 }
 
-func ExistsHandle(tokens []string, conn net.Conn, s *Store) {
+func ExistsHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 	if len(tokens) < 2 {
 		conn.Write([]byte("Usage: EXISTS key\n"))
 		return
@@ -48,7 +49,7 @@ func ExistsHandle(tokens []string, conn net.Conn, s *Store) {
 	conn.Write([]byte(value + "\n"))
 }
 
-func ListHandle(tokens []string, conn net.Conn, s *Store) {
+func ListHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 	result := s.List()
 	if result != "" {
 		conn.Write([]byte(result))
@@ -57,7 +58,7 @@ func ListHandle(tokens []string, conn net.Conn, s *Store) {
 	}
 }
 
-func SetHandle(tokens []string, conn net.Conn, s *Store) {
+func SetHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 	if len(tokens) < 3 {
 		conn.Write([]byte("Usage: SET key value [NX|XX] [EX seconds]\n"))
 		return
@@ -113,7 +114,7 @@ func SetHandle(tokens []string, conn net.Conn, s *Store) {
 	conn.Write([]byte("OK\n"))
 }
 
-func GetHandle(tokens []string, conn net.Conn, s *Store) {
+func GetHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 	if len(tokens) < 2 {
 		conn.Write([]byte("Usage: GET key\n"))
 		return
@@ -128,7 +129,7 @@ func GetHandle(tokens []string, conn net.Conn, s *Store) {
 	}
 }
 
-func DelHandle(tokens []string, conn net.Conn, s *Store) {
+func DelHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 	if len(tokens) < 2 {
 		conn.Write([]byte("Usage: DEL key\n"))
 		return
@@ -143,7 +144,7 @@ func DelHandle(tokens []string, conn net.Conn, s *Store) {
 	}
 }
 
-func FlushallHandle(letokens []string, conn net.Conn, s *Store) {
+func FlushallHandle(letokens []string, conn net.Conn, s *stokage.Store) {
 	ok := s.Flushall()
 
 	if ok {
@@ -153,8 +154,8 @@ func FlushallHandle(letokens []string, conn net.Conn, s *Store) {
 	}
 }
 
-func SaveHandle(tokens []string, conn net.Conn, s *Store) {
-	fileName := "store.json"
+func SaveHandle(tokens []string, conn net.Conn, s *stokage.Store) {
+	fileName := "stokage.store.json"
 
 	if len(tokens) >= 2 {
 		fileName = tokens[1]
@@ -172,7 +173,7 @@ func SaveHandle(tokens []string, conn net.Conn, s *Store) {
 	}
 }
 
-func LoadHandle(tokens []string, conn net.Conn, s *Store) {
+func LoadHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 	fileName := "store.json"
 
 	if len(tokens) >= 2 {

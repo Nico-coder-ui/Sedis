@@ -1,37 +1,35 @@
-package main
+package tcp
 
 import (
 	"fmt"
 	"net"
 	"strings"
 
-	"mini-redis/internal"
+	"sedis/stokage"
+	"sedis/tcp/internal"
 )
 
-func main() {
-	listener, err := net.Listen("tcp", "localhost:8000")
+func Start(port string, s *stokage.Store) {
+	conn, err := net.Listen("tcp", "localhost"+port)
 	if err != nil {
 		fmt.Println("Error Listen:", err)
 		return
 	}
-	defer listener.Close()
+	defer conn.Close()
 
 	ch := make(chan internal.Request, 5)
-	s := internal.NewStore()
-	s.StartExpirationLoop()
-	s.Load("store.json")
 
 	go func() {
 		for req := range ch {
 			fmt.Printf("Received on server : %s\n", strings.TrimSpace(req.Message))
-			internal.ParseMsg(req.Message, &s, req.Conn)
+			internal.ParseMsg(req.Message, s, req.Conn)
 		}
 	}()
 
 	fmt.Println("Mini-Redis Server running on localhost:8000...")
 
 	for {
-		conn, err := listener.Accept()
+		conn, err := conn.Accept()
 		if err != nil {
 			fmt.Println("Error Accept:", err)
 			continue

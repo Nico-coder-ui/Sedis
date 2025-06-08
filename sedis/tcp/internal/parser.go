@@ -2,10 +2,11 @@ package internal
 
 import (
 	"net"
+	"sedis/stokage"
 	"strings"
 )
 
-func ParseMsg(msg string, s *Store, conn net.Conn) {
+func ParseMsg(msg string, s *stokage.Store, conn net.Conn) {
 	tokens := strings.Fields(msg)
 
 	if len(tokens) == 0 {

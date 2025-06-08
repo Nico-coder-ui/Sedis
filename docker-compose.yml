@@ -1,0 +1,11 @@
+services:
+  sedis:
+    container_name: sedis-service
+    image: sedis:1.0
+    build: ./sedis
+    ports:
+      - "8085:8085"
+      - "8086:8086"
+    restart: on-failure:1
+    volumes:
+      - ./json:/app/json
