@@ -1,4 +1,21 @@
+networks:
+  sedis_network:
+    driver: bridge
+    name: sedis_network
+    driver_opts:
+      com.docker.network.enable_ipv4: "true"
+      com.docker.network.enable_ipv6: "false"
+
 services:
+  sedis_manager:
+    container_name: sedis_manager-service
+    image: sedis_manager:1.0
+    build: ./sedis_manager
+    ports:
+      - "8087:8087"
+    restart: on-failure:1
+    networks:
+      - sedis_network
   sedis:
     container_name: sedis-service
     image: sedis:1.0
@@ -9,3 +26,5 @@ services:
     restart: on-failure:1
     volumes:
       - ./json:/app/json
+    networks:
+      - sedis_network

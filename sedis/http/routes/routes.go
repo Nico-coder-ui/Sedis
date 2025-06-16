@@ -26,14 +26,14 @@ func SetupRouter(store *stokage.Store) *gin.Engine {
 	})
 
 	r.POST("/ttl", controllers.TtlHandler(store))
-	r.POST("/set", controllers.Set)
-	r.POST("/del", controllers.Del)
-	r.POST("/flushall", controllers.Flushall)
-	r.POST("/save", controllers.Save)
-	r.POST("/load", controllers.Load)
+	r.POST("/set", controllers.SetHandler(store))
+	r.POST("/del", controllers.DelHandler(store))
+	r.POST("/flushall", controllers.FlushallHandler(store))
+	r.POST("/save", controllers.SaveHandler(store))
+	r.POST("/load", controllers.LoadHandler(store))
 
-	r.GET("/exists", controllers.Exists)
-	r.GET("/list", controllers.List)
+	r.GET("/exists", controllers.ExistsHandler(store))
+	r.GET("/list", controllers.ListHandler(store))
 	r.GET("/get", controllers.GetHandler(store))
 
 	return r

@@ -1,12 +1,14 @@
 package internal
 
 import (
+	"fmt"
 	"net"
 	"sedis/stokage"
 	"strings"
 )
 
 func ParseMsg(msg string, s *stokage.Store, conn net.Conn) {
+	fmt.Println("Début du parsing")
 	tokens := strings.Fields(msg)
 
 	if len(tokens) == 0 {
@@ -33,6 +35,7 @@ func ParseMsg(msg string, s *stokage.Store, conn net.Conn) {
 		ListHandle(tokens, conn, s)
 
 	case "SET":
+		fmt.Println("Set détecté")
 		SetHandle(tokens, conn, s)
 
 	case "GET":
