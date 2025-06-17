@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"io"
 	"net/http"
 	"sedis/stokage"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,13 +16,18 @@ func ExistsHandler(store *stokage.Store) gin.HandlerFunc {
 }
 
 func Exists(c *gin.Context, store *stokage.Store) {
-	key := c.GetString("key")
-	if key != "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "key error"})
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.String(http.StatusBadRequest, "failed to read body")
 		return
 	}
+	msg := string(body)
+	tokens := strings.Fields(msg)
+
+	key := tokens[1]
+	value := store.Exists(key)
 
 	var a Answer
-	a.DATA = store.Exists(key)
+	a.DATA = value
 	c.JSON(http.StatusOK, a)
 }

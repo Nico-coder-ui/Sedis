@@ -46,7 +46,7 @@ func main() {
 					fmt.Println(err)
 					os.Exit(0)
 				}
-				fmt.Print("Serveur :", string(buf[:n]))
+				fmt.Print(string(buf[:n]))
 				fmt.Print(">>> ")
 			}
 		}()

@@ -17,7 +17,7 @@ func main() {
 	router := routes.SetupRouter(&store)
 
 	go func() {
-		errChan <- router.Run("0.0.0.0:8085") // Gin
+		errChan <- router.Run("0.0.0.0:8085")
 	}()
 
 	go tcp.Start(":8086", &store, errChan)

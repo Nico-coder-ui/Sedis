@@ -10,19 +10,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var setCmd = &cobra.Command{
-	Use:   "SET",
-	Short: "Use SET on Sedis",
-	RunE:  setHandle,
+var delCmd = &cobra.Command{
+	Use:   "DEL",
+	Short: "Use DEL on Sedis",
+	RunE:  delHandle,
 }
 
-func setHandle(cmd *cobra.Command, args []string) error {
-	if len(args) < 2 {
-		return fmt.Errorf("usage: SET key value [NX|XX] [EX seconds]")
+func delHandle(cmd *cobra.Command, args []string) error {
+	if len(args) < 1 {
+		return fmt.Errorf("usage: DEL key")
 	}
 
-	msg := "SET " + strings.Join(args, " ")
-	req, err := http.NewRequest("POST", "http://sedis:8085/set", bytes.NewBufferString(msg))
+	msg := "DEL " + strings.Join(args, " ")
+	req, err := http.NewRequest("POST", "http://sedis:8085/del", bytes.NewBufferString(msg))
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -42,5 +42,5 @@ func setHandle(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	rootCmd.AddCommand(setCmd)
+	rootCmd.AddCommand(delCmd)
 }

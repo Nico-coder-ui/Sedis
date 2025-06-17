@@ -1,28 +1,25 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/spf13/cobra"
 )
 
-var setCmd = &cobra.Command{
-	Use:   "SET",
-	Short: "Use SET on Sedis",
-	RunE:  setHandle,
+var flushallCmd = &cobra.Command{
+	Use:   "FLUSHALL",
+	Short: "Use FLUSHALL on Sedis",
+	RunE:  flushallHandle,
 }
 
-func setHandle(cmd *cobra.Command, args []string) error {
-	if len(args) < 2 {
-		return fmt.Errorf("usage: SET key value [NX|XX] [EX seconds]")
+func flushallHandle(cmd *cobra.Command, args []string) error {
+	if len(args) != 0 {
+		return fmt.Errorf("usage: FLUSHALL")
 	}
 
-	msg := "SET " + strings.Join(args, " ")
-	req, err := http.NewRequest("POST", "http://sedis:8085/set", bytes.NewBufferString(msg))
+	req, err := http.NewRequest("POST", "http://sedis:8085/flushall", nil)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
@@ -42,5 +39,5 @@ func setHandle(cmd *cobra.Command, args []string) error {
 }
 
 func init() {
-	rootCmd.AddCommand(setCmd)
+	rootCmd.AddCommand(flushallCmd)
 }

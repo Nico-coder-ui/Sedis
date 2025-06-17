@@ -22,14 +22,25 @@ func TtlHandler(store *stokage.Store) gin.HandlerFunc {
 }
 
 func Ttl(c *gin.Context, store *stokage.Store) {
-	key := c.GetString("key")
-	if key != "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "key error"})
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.String(http.StatusBadRequest, "failed to read body")
+		return
+	}
+	msg := string(body)
+	tokens := strings.Fields(msg)
+
+	if len(tokens) < 2 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Usage: TTL key\n"})
 		return
 	}
 
+	key := tokens[1]
+
+	value := store.Ttl(key)
+
 	var a Answer
-	a.DATA = store.Ttl(key)
+	a.DATA = value
 	c.JSON(http.StatusOK, a)
 }
 
@@ -40,9 +51,14 @@ func ListHandler(store *stokage.Store) gin.HandlerFunc {
 }
 
 func List(c *gin.Context, store *stokage.Store) {
-	var a Answer
-	a.DATA = store.List()
-	c.JSON(http.StatusOK, a)
+	result := store.List()
+	if result != "" {
+		var a Answer
+		a.DATA = result
+		c.JSON(http.StatusOK, a)
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No data\n"})
+	}
 }
 
 func SetHandler(store *stokage.Store) gin.HandlerFunc {
@@ -127,15 +143,28 @@ func GetHandler(store *stokage.Store) gin.HandlerFunc {
 }
 
 func Get(c *gin.Context, store *stokage.Store) {
-	key := c.GetString("key")
-	if key != "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "key error"})
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.String(http.StatusBadRequest, "failed to read body")
 		return
 	}
+	msg := string(body)
+	tokens := strings.Fields(msg)
 
-	var a Answer
-	a.DATA, _ = store.Get(key)
-	c.JSON(http.StatusOK, a)
+	if len(tokens) < 2 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Usage: GET key\n"})
+		return
+	}
+	key := tokens[1]
+
+	value, ok := store.Get(key)
+	if ok {
+		var a Answer
+		a.DATA = value
+		c.JSON(http.StatusOK, a)
+	} else {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Key not found\n"})
+	}
 }
 
 func DelHandler(store *stokage.Store) gin.HandlerFunc {
@@ -145,17 +174,25 @@ func DelHandler(store *stokage.Store) gin.HandlerFunc {
 }
 
 func Del(c *gin.Context, store *stokage.Store) {
-	key := c.GetString("key")
-	if key != "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "key error"})
+	body, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		c.String(http.StatusBadRequest, "failed to read body")
 		return
 	}
+	msg := string(body)
+	tokens := strings.Fields(msg)
 
-	isAccepted := store.Del(key)
-	if isAccepted {
+	if len(tokens) < 2 {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Usage: DEL key\n"})
+		return
+	}
+	key := tokens[1]
+	b := store.Del(key)
+
+	if b {
 		c.JSON(http.StatusOK, nil)
 	} else {
-		c.JSON(http.StatusNotAcceptable, nil)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Key not found\n"})
 	}
 }
 
@@ -166,10 +203,11 @@ func FlushallHandler(store *stokage.Store) gin.HandlerFunc {
 }
 
 func Flushall(c *gin.Context, store *stokage.Store) {
-	isAccepted := store.Flushall()
-	if isAccepted {
+	ok := store.Flushall()
+
+	if ok {
 		c.JSON(http.StatusOK, nil)
 	} else {
-		c.JSON(http.StatusNotAcceptable, nil)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to clear all data\n"})
 	}
 }

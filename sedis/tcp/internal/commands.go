@@ -155,10 +155,10 @@ func FlushallHandle(letokens []string, conn net.Conn, s *stokage.Store) {
 }
 
 func SaveHandle(tokens []string, conn net.Conn, s *stokage.Store) {
-	fileName := "stokage.store.json"
+	fileName := "json/store.json"
 
 	if len(tokens) >= 2 {
-		fileName = tokens[1]
+		fileName = "json/" + tokens[1]
 		if !strings.HasSuffix(fileName, ".json") {
 			conn.Write([]byte("File name must be a .json\n"))
 			return
@@ -174,10 +174,10 @@ func SaveHandle(tokens []string, conn net.Conn, s *stokage.Store) {
 }
 
 func LoadHandle(tokens []string, conn net.Conn, s *stokage.Store) {
-	fileName := "store.json"
+	fileName := "json/store.json"
 
 	if len(tokens) >= 2 {
-		fileName = tokens[1]
+		fileName = "json/" + tokens[1]
 		if !strings.HasSuffix(fileName, ".json") {
 			conn.Write([]byte("File name must be a .json\n"))
 			return
