@@ -35,7 +35,6 @@ func ParseMsg(msg string, s *stokage.Store, conn net.Conn) {
 		ListHandle(tokens, conn, s)
 
 	case "SET":
-		fmt.Println("Set détecté")
 		SetHandle(tokens, conn, s)
 
 	case "GET":
