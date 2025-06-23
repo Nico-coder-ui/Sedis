@@ -11,11 +11,15 @@ Sedis est une implémentation minimaliste de Redis, conçue pour gérer des opé
 
 ## Compilation
 
-``docker-compose build``<br>
-``docker-compose up -d``<br>
+```
+docker-compose build
+docker-compose up -d
+```
 
 ## Utilisation
-``docker-compose run --rm sedis_manager ./sedis_manager [COMMAND]``<br>
+```
+docker-compose run --rm sedis_manager ./sedis_manager [COMMAND]
+```
 
 **Commandes:**<br>
 ```
